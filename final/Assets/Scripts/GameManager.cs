@@ -48,8 +48,8 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        sensitivitySlider.value = cameraController.mouseSensitivity;
-        sensitivitySlider.onValueChanged.AddListener(cameraController.SetMouseSensitivity);
+        // sensitivitySlider.value = cameraController.mouseSensitivity;
+        // sensitivitySlider.onValueChanged.AddListener(cameraController.SetMouseSensitivity);
 
 
         if (pauseCanvas != null)
