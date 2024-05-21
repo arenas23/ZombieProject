@@ -5,20 +5,29 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private float mouseSensitivity = 120f;
+    [Header("MoveCamera")]
+    private float mouseSensitivity = 100f;
     [SerializeField] Transform playerBody;
     [SerializeField] float xRotation = 0;
-    [SerializeField] Transform hip;
     private float elapsedTime;
 
+    [Header("Aim")]
+    [SerializeField] Transform aimPoint;
+    [SerializeField]Transform player;
     bool isAiming = false; 
-    Vector3 aimPosition = new Vector3(0.219128042f, 0.00321622379f, -0.407871693f);
-    Vector3 startPosition = new Vector3(0.0970000327f, 0.0286163092f, -0.531724453f);
+    Vector3 aimPosition = new(-0.220799997f, -0.0147000002f, 0.350699991f);
+    Vector3 startPosition;
     Vector3 currentPosition;
+    Quaternion initialRotation;
+    Quaternion currentRotation;
+
+    
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        startPosition = player.localPosition;
+        initialRotation = player.transform.localRotation;
     }
 
 
@@ -34,30 +43,34 @@ public class CameraController : MonoBehaviour
         {
             isAiming = false;
             elapsedTime = 0;
-            currentPosition = transform.localPosition;
+            currentPosition = player.transform.localPosition;
+            currentRotation = player.transform.localRotation;
+
 
         }
 
-
         if (isAiming)
         {
-            if (transform.localPosition != aimPosition)
+            if (player.transform.localPosition != aimPosition)
             {
                 elapsedTime += Time.deltaTime;
-                float perccentageComplete = elapsedTime / 0.5f;
-                transform.localPosition = Vector3.Lerp(startPosition, aimPosition, perccentageComplete);
+                float perccentageComplete = elapsedTime / 0.2f;
+                player.transform.localPosition = Vector3.Lerp(startPosition, aimPosition, perccentageComplete);
+                player.transform.localRotation = Quaternion.Slerp(initialRotation, aimPoint.localRotation, perccentageComplete) ;
             }else {
                 elapsedTime = 0;
             }
            
 
         }else {
-            if(transform.localPosition != startPosition )
+            if(player.transform.localPosition != startPosition )
             {
                 elapsedTime += Time.deltaTime;
                 float perccentageComplete = elapsedTime / 0.3f;
-                transform.localPosition = Vector3.Lerp(currentPosition, startPosition, perccentageComplete);
-            }else{
+                player.transform.localPosition = Vector3.Lerp(currentPosition, startPosition, perccentageComplete);
+                player.transform.localRotation = Quaternion.Slerp(currentRotation, initialRotation, perccentageComplete);
+            }
+            else{
                 elapsedTime = 0;
             }
             
@@ -67,17 +80,25 @@ public class CameraController : MonoBehaviour
 
     void CameraMove()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime ;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime;
 
-        xRotation -= mouseY;
+        if(mouseY != 0)
+        {
+            xRotation -= mouseY * mouseSensitivity;
 
-        xRotation = math.clamp(xRotation, -90f, 90f);
+            xRotation = math.clamp(xRotation, -90f, 90f);
 
-        // transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-         hip.localRotation = Quaternion.Euler(xRotation, 0, 0);
+            transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        }
 
-        playerBody.Rotate(Vector3.up * mouseX);
+        if(mouseX != 0)
+        {
+            playerBody.Rotate(Vector3.up * mouseX * mouseSensitivity);
+        }
+
+
+   
     }
 
 
