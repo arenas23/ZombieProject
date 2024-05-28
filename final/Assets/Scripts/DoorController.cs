@@ -95,33 +95,28 @@ public class DoorController : MonoBehaviour
 
     private void verifyKey()
     {
-        if (GameManager.Instance)
+        if (isLocked && requireKey)
         {
-            if (GameManager.Instance.keyCard == 0 && requireKey) isLocked = true;
-            else isLocked = false;
+            circleBackground1.sprite = redCircleBackground;
+            circleBackground2.sprite = redCircleBackground;
 
-            if (isLocked && requireKey)
-            {
-                circleBackground1.sprite = redCircleBackground;
-                circleBackground2.sprite = redCircleBackground;
+            textBackground1.sprite = redTextBackground;
+            textBackground2.sprite = redTextBackground;
 
-                textBackground1.sprite = redTextBackground;
-                textBackground2.sprite = redTextBackground;
-
-                doorText1.text = locked;
-                doorText2.text = locked;
-            }
-            else
-            {
-                circleBackground1.sprite = blueCircleBackground;
-                circleBackground2.sprite = blueCircleBackground;
-
-                textBackground1.sprite = blueTextBackground;
-                textBackground2.sprite = blueTextBackground;
-
-                doorText1.text = unlocked;
-                doorText2.text = unlocked;
-            }
+            doorText1.text = locked;
+            doorText2.text = locked;
         }
+        else
+        {
+            circleBackground1.sprite = blueCircleBackground;
+            circleBackground2.sprite = blueCircleBackground;
+
+            textBackground1.sprite = blueTextBackground;
+            textBackground2.sprite = blueTextBackground;
+
+            doorText1.text = unlocked;
+            doorText2.text = unlocked;
+        }
+        
     }
 }

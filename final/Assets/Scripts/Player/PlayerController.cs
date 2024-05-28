@@ -34,6 +34,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform weapon;
     public WeaponSway weaponSway;
 
+    public bool isReloading = false;
+
+    [SerializeField] Animator handsAnimator, GunAnimator;
+    [SerializeField] WeaponController weaponController;
+
     float m_CameraVerticalAngle = 0f;
 
     public float RotationMultiplier
@@ -83,6 +88,14 @@ public class PlayerController : MonoBehaviour
 
         HandleCharacterMovement();
 
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading && weaponController.ammunitionReserve > 0)
+        {
+            isReloading = true;
+            handsAnimator.Play("Arms_Rig|Reload");
+            GunAnimator.Play("Reload");
+
+        }
+
 
     }
 
@@ -92,13 +105,15 @@ public class PlayerController : MonoBehaviour
         if (IsAiming) 
         {
             weapon.localPosition = Vector3.Lerp(weapon.localPosition, aimPoint.localPosition, AimingAnimationSpeed * Time.deltaTime);   
-            // weapon.localRotation = Quaternion.Slerp(initialRotation, aimPoint.localRotation, AimingAnimationSpeed * Time.deltaTime);
+            weapon.localRotation = Quaternion.Slerp(weapon.localRotation, aimPoint.localRotation, AimingAnimationSpeed * Time.deltaTime);
+            weaponSway.smoothRotation = 0;
         }
         else 
         {
 
-            weapon.localPosition = Vector3.Lerp(weapon.localPosition, defaultPosition.localPosition , AimingAnimationSpeed * Time.deltaTime);
-            // weapon.localRotation = Quaternion.Slerp(currentRotation, initialRotation, AimingAnimationSpeed * Time.deltaTime);
+            weapon.localPosition = Vector3.Lerp(weapon.localPosition, new Vector3(0f, 0f,0f) , AimingAnimationSpeed * Time.deltaTime);
+            weapon.localRotation = Quaternion.Slerp(weapon.localRotation, Quaternion.identity, AimingAnimationSpeed * Time.deltaTime);
+            weaponSway.smoothRotation = 12;
         }
     }
 
@@ -127,8 +142,6 @@ public class PlayerController : MonoBehaviour
 
     private float GetLookInputsMouse(string inputMouse)
     {
-        // Check if this look input is coming from the mouse
-
         float i = Input.GetAxisRaw(inputMouse);
 
         // handle inverting vertical input

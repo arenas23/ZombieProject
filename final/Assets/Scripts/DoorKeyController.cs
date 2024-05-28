@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class DoorKeyController : MonoBehaviour
 {
 
-    Objetivos objetivos;
     // Start is called before the first frame update
     private Animator animator;
     [Header("Door")]
@@ -36,7 +35,6 @@ public class DoorKeyController : MonoBehaviour
 
     public void Start()
     {
-        objetivos = GameObject.Find("UIObjectives").GetComponent<Objetivos>();
         animator = GetComponentInParent<Animator>();
         verifyKey();
     }
@@ -56,11 +54,6 @@ public class DoorKeyController : MonoBehaviour
                 animator.Play("abrir");
                 isOpen = true;
                 // AudioManager.Instance.PlaySFX(1);
-                if(GameManager.Instance.keyCard == 1 && firstTime)
-                {
-                    objetivos.CompleteObjective(Objetivos.ObjectivesEnum.GO_CONTROL_ROOM);
-                    firstTime = false;
-                }
 
             }
 
@@ -103,33 +96,28 @@ public class DoorKeyController : MonoBehaviour
 
     private void verifyKey()
     {
-        if (GameManager.Instance)
+        if (isLocked && requireKey)
         {
-            if (GameManager.Instance.keyCard == 0 && requireKey) isLocked = true;
-            else isLocked = false;
+            circleBackground1.sprite = redCircleBackground;
+            circleBackground2.sprite = redCircleBackground;
 
-            if (isLocked && requireKey)
-            {
-                circleBackground1.sprite = redCircleBackground;
-                circleBackground2.sprite = redCircleBackground;
+            textBackground1.sprite = redTextBackground;
+            textBackground2.sprite = redTextBackground;
 
-                textBackground1.sprite = redTextBackground;
-                textBackground2.sprite = redTextBackground;
-
-                doorText1.text = locked;
-                doorText2.text = locked;
-            }
-            else
-            {
-                circleBackground1.sprite = blueCircleBackground;
-                circleBackground2.sprite = blueCircleBackground;
-
-                textBackground1.sprite = blueTextBackground;
-                textBackground2.sprite = blueTextBackground;
-
-                doorText1.text = unlocked;
-                doorText2.text = unlocked;
-            }
+            doorText1.text = locked;
+            doorText2.text = locked;
         }
+        else
+        {
+            circleBackground1.sprite = blueCircleBackground;
+            circleBackground2.sprite = blueCircleBackground;
+
+            textBackground1.sprite = blueTextBackground;
+            textBackground2.sprite = blueTextBackground;
+
+            doorText1.text = unlocked;
+            doorText2.text = unlocked;
+        }
+        
     }
 }
